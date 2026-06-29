@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Loader2, Eye, EyeOff, Building2, CheckCircle } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,13 +15,13 @@ import { EnvErrorState } from '@/components/shared'
 
 export function SignupForm() {
   const supabase = getSupabaseBrowserClient()
+  const router = useRouter()
   const [fullName, setFullName]         = useState('')
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
   const [confirmPassword, setConfirm]   = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading]       = useState(false)
-  const [success, setSuccess]           = useState(false)
 
   if (!supabase) {
     return <EnvErrorState />
@@ -37,7 +38,10 @@ export function SignupForm() {
     setIsLoading(true)
     try {
       const supabase = getSupabaseBrowserClient()
-      if (!supabase) return
+      if (!supabase) {
+        setIsLoading(false)
+        return
+      }
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -53,54 +57,17 @@ export function SignupForm() {
         } else {
           toast.error(error.message)
         }
+        setIsLoading(false)
         return
       }
 
-      setSuccess(true)
+      setIsLoading(false)
+      router.push('/dashboard')
+      return
     } catch {
       toast.error('Something went wrong. Please try again.')
-    } finally {
       setIsLoading(false)
     }
-  }
-
-  // Success state — tell user to check email
-  if (success) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-accent/20 p-4">
-        <div className="w-full max-w-sm space-y-6 animate-fade-in text-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-status-approved-bg">
-              <CheckCircle className="h-7 w-7 text-status-approved" />
-            </div>
-            <h1 className="text-xl font-bold text-foreground">Check your email</h1>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.
-            </p>
-          </div>
-          <Card className="border shadow-card text-left">
-            <CardContent className="pt-4 pb-4">
-              <p className="text-xs text-muted-foreground">
-                Didn&apos;t receive it? Check your spam folder or{' '}
-                <button
-                  onClick={() => setSuccess(false)}
-                  className="text-primary underline underline-offset-4"
-                >
-                  try again
-                </button>
-                .
-              </p>
-            </CardContent>
-          </Card>
-          <p className="text-xs text-muted-foreground">
-            Already confirmed?{' '}
-            <Link href="/login" className="text-primary underline underline-offset-4">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </main>
-    )
   }
 
   return (
