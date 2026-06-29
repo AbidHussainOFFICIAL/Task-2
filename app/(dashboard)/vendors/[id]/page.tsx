@@ -57,20 +57,20 @@ export default function VendorDetailPage() {
         </Button>
       </div>
 
-      <div className="p-4 lg:p-6 space-y-6 max-w-5xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="p-4 lg:p-6 space-y-6 w-full max-w-5xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Profile card */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0">
             <VendorCard vendor={vendor} onRefresh={() => mutate()} />
           </div>
 
           {/* Tabs */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 min-w-0">
             <Card className="shadow-card overflow-hidden">
               {/* Tab bar */}
-              <div className="flex border-b border-border px-2">
+              <div className="flex border-b border-border px-2 overflow-x-auto">
                 <button className={tabClass('quotations')} onClick={() => setTab('quotations')}>
-                  <FileText className="h-4 w-4" />
+                  <FileText className="h-4 w-4 shrink-0" />
                   Quotations
                   {vendor.quotations && vendor.quotations.length > 0 && (
                     <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium">

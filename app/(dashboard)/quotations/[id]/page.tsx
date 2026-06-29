@@ -54,29 +54,30 @@ export default function QuotationDetailPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Back nav + export */}
-      <div className="px-4 lg:px-6 py-3 border-b border-border flex items-center justify-between">
-        <Button variant="ghost" size="sm" asChild className="-ml-2">
-          <Link href="/quotations"><ChevronLeft className="h-4 w-4" />Back to Quotations</Link>
+      <div className="px-4 lg:px-6 py-3 border-b border-border flex items-center justify-between gap-2 min-w-0">
+        <Button variant="ghost" size="sm" asChild className="-ml-2 shrink-0">
+          <Link href="/quotations"><ChevronLeft className="h-4 w-4" />Back</Link>
         </Button>
-        <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="gap-1.5">
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting} className="gap-1.5 shrink-0">
           <Download className="h-3.5 w-3.5" />
-          {exporting ? 'Exporting…' : 'Export PDF'}
+          <span className="hidden sm:inline">{exporting ? 'Exporting…' : 'Export PDF'}</span>
+          <span className="sm:hidden">{exporting ? '…' : 'PDF'}</span>
         </Button>
       </div>
 
-      <div className="p-4 lg:p-6 space-y-6 max-w-5xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="p-4 lg:p-6 space-y-6 w-full max-w-5xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
 
           {/* Left — main detail */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 min-w-0">
             <Card className="shadow-card">
               <CardContent className="p-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-mono text-muted-foreground mb-1">
+                    <p className="text-xs font-mono text-muted-foreground mb-1 truncate">
                       {quotation.vendor_reference}
                     </p>
-                    <h2 className="text-xl font-bold text-foreground leading-tight">
+                    <h2 className="text-xl font-bold text-foreground leading-tight break-words">
                       {quotation.quotation_title}
                     </h2>
                   </div>
@@ -110,7 +111,7 @@ export default function QuotationDetailPage() {
                   <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
                     Description
                   </p>
-                  <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                  <p className="text-sm text-foreground leading-relaxed break-words">
                     {quotation.description}
                   </p>
                 </div>
@@ -126,15 +127,15 @@ export default function QuotationDetailPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary text-sm font-bold shrink-0">
                       {vendor.vendor_name?.slice(0, 2).toUpperCase()}
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{vendor.vendor_name}</p>
-                      <p className="text-xs text-muted-foreground">{vendor.company_name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{vendor.vendor_name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{vendor.company_name}</p>
                     </div>
-                    <Button variant="outline" size="sm" asChild className="ml-auto">
+                    <Button variant="outline" size="sm" asChild className="shrink-0">
                       <Link href={`/vendors/${quotation.vendor_id}`}>View Profile</Link>
                     </Button>
                   </div>
@@ -152,7 +153,7 @@ export default function QuotationDetailPage() {
           </div>
 
           {/* Right — status + timeline */}
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">
             <StatusController
               quotationId={quotation.id}
               currentStatus={quotation.status}

@@ -1,13 +1,15 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { useVendors } from '@/hooks/useVendors'
+
 import { useState } from 'react'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+
 import { PageHeader, SearchInput, FilterChips, ErrorCard } from '@/components/shared'
 import { VendorTable } from '@/components/vendors'
-import { useVendors } from '@/hooks/useVendors'
-import { Card } from '@/components/ui/card'
 
 type StatusFilter = 'all' | 'Active' | 'Inactive'
 
@@ -17,7 +19,7 @@ const STATUS_CHIPS = [
   { value: 'Inactive' as StatusFilter, label: 'Inactive' },
 ]
 
-export default function VendorsPage() {
+export function VendorsContent() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<StatusFilter>('all')
   const [page, setPage] = useState(1)
@@ -46,7 +48,7 @@ export default function VendorsPage() {
 
       <div className="p-4 lg:p-6 space-y-4 flex-1">
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:flex-wrap">
+        <div className="flex flex-col sm:flex-row gap-3">
           <SearchInput
             value={search}
             onChange={(v) => { setSearch(v); setPage(1) }}
@@ -71,7 +73,7 @@ export default function VendorsPage() {
             />
 
             {meta && meta.totalPages > 1 && (
-              <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-t border-border">
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                 <p className="text-xs text-muted-foreground">
                   Page {meta.page} of {meta.totalPages} · {meta.total} total
                 </p>

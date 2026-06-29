@@ -16,8 +16,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Main content area */}
         <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
           <Topbar />
-          <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
-            {children}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden pb-16 lg:pb-0">
+            <div className="min-w-0 w-full">
+              {children}
+            </div>
           </main>
           <BottomNav />
         </div>

@@ -23,6 +23,41 @@ interface VendorTableProps {
   onRefresh: () => void
 }
 
+function VendorActions({
+  vendor,
+  onDelete,
+}: {
+  vendor: Vendor
+  onDelete: (v: Vendor) => void
+}) {
+  const router = useRouter()
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+          <MoreHorizontal className="h-4 w-4" />
+          <span className="sr-only">Actions</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => router.push(`/vendors/${vendor.id}`)}>
+          <Eye className="h-4 w-4" />View Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push(`/vendors/${vendor.id}/edit`)}>
+          <Pencil className="h-4 w-4" />Edit
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive"
+          onClick={() => onDelete(vendor)}
+        >
+          <Trash2 className="h-4 w-4" />Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export function VendorTable({ vendors, isLoading, onRefresh }: VendorTableProps) {
   const router = useRouter()
   const [deleteTarget, setDeleteTarget] = useState<Vendor | null>(null)
@@ -50,83 +85,100 @@ export function VendorTable({ vendors, isLoading, onRefresh }: VendorTableProps)
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>Vendor</TableHead>
-            <TableHead className="hidden sm:table-cell">Company</TableHead>
-            <TableHead className="hidden md:table-cell">Email</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="hidden lg:table-cell">Joined</TableHead>
-            <TableHead className="w-[52px]" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {vendors.map((vendor) => (
-            <TableRow
-              key={vendor.id}
-              className="cursor-pointer"
-              onClick={() => router.push(`/vendors/${vendor.id}`)}
-            >
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
-                    {vendor.vendor_name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{vendor.vendor_name}</p>
-                    <p className="text-xs text-muted-foreground sm:hidden truncate">{vendor.company_name}</p>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                {vendor.company_name}
-              </TableCell>
-              <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                <a
-                  href={`mailto:${vendor.email_address}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="hover:text-foreground hover:underline flex items-center gap-1"
-                >
-                  {vendor.email_address}
-                  <ExternalLink className="h-3 w-3 opacity-50" />
-                </a>
-              </TableCell>
-              <TableCell>
+      {/* ── Mobile card list (hidden md+) ─────────────────── */}
+      <div className="md:hidden space-y-3 px-1">
+        {vendors.map((vendor) => (
+          <div
+            key={vendor.id}
+            className="rounded-xl border border-border bg-card shadow-sm p-4 flex items-start gap-3 cursor-pointer active:scale-[0.99] transition-transform"
+            onClick={() => router.push(`/vendors/${vendor.id}`)}
+          >
+            {/* Avatar */}
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+              {vendor.vendor_name.slice(0, 2).toUpperCase()}
+            </div>
+
+            {/* Main info */}
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-foreground truncate">{vendor.vendor_name}</p>
                 <VendorStatusBadge status={vendor.status} />
-              </TableCell>
-              <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                <DateDisplay date={vendor.created_at} />
-              </TableCell>
-              <TableCell onClick={(e) => e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => router.push(`/vendors/${vendor.id}`)}>
-                      <Eye className="h-4 w-4" />View Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push(`/vendors/${vendor.id}/edit`)}>
-                      <Pencil className="h-4 w-4" />Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => setDeleteTarget(vendor)}
-                    >
-                      <Trash2 className="h-4 w-4" />Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+              </div>
+              <p className="text-xs text-muted-foreground truncate">{vendor.company_name}</p>
+              <a
+                href={`mailto:${vendor.email_address}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground hover:underline truncate"
+              >
+                {vendor.email_address}
+                <ExternalLink className="h-3 w-3 shrink-0 opacity-50" />
+              </a>
+              <p className="text-xs text-muted-foreground">
+                Joined <DateDisplay date={vendor.created_at} />
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div onClick={(e) => e.stopPropagation()}>
+              <VendorActions vendor={vendor} onDelete={setDeleteTarget} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Desktop table (hidden below md) ──────────────── */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Vendor</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead className="hidden lg:table-cell">Email</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="hidden lg:table-cell">Joined</TableHead>
+              <TableHead className="w-[52px]" />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {vendors.map((vendor) => (
+              <TableRow
+                key={vendor.id}
+                className="cursor-pointer"
+                onClick={() => router.push(`/vendors/${vendor.id}`)}
+              >
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                      {vendor.vendor_name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <p className="text-sm font-medium text-foreground truncate">{vendor.vendor_name}</p>
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">{vendor.company_name}</TableCell>
+                <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                  <a
+                    href={`mailto:${vendor.email_address}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="hover:text-foreground hover:underline flex items-center gap-1"
+                  >
+                    {vendor.email_address}
+                    <ExternalLink className="h-3 w-3 opacity-50" />
+                  </a>
+                </TableCell>
+                <TableCell>
+                  <VendorStatusBadge status={vendor.status} />
+                </TableCell>
+                <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                  <DateDisplay date={vendor.created_at} />
+                </TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <VendorActions vendor={vendor} onDelete={setDeleteTarget} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <ConfirmModal
         open={!!deleteTarget}

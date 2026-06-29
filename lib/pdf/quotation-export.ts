@@ -127,3 +127,74 @@ export async function exportQuotationPdf(quotation: Quotation): Promise<void> {
   const safeName = quotation.vendor_reference.replace(/[^a-zA-Z0-9-]/g, '-')
   doc.save(`FS2-Quotation-${safeName}.pdf`)
 }
+
+export async function exportQuotationsListPdf(quotations: Quotation[], title = 'Quotations Export'): Promise<void> {
+  const { default: jsPDF } = await import('jspdf')
+  const { default: autoTable } = await import('jspdf-autotable')
+
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const now = new Date()
+
+  // ─── Header bar ───────────────────────────────────────────
+  doc.setFillColor(79, 70, 229)
+  doc.rect(0, 0, pageWidth, 22, 'F')
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.text('FS-2 Vendor Management', 14, 10)
+
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Generated: ${formatDate(now.toISOString(), 'displayWithTime')}`, pageWidth - 14, 10, { align: 'right' })
+
+  // ─── Title ────────────────────────────────────────────────
+  doc.setTextColor(20, 20, 40)
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'bold')
+  doc.text(title, 14, 32)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(100, 100, 120)
+  doc.text(`${quotations.length} record${quotations.length !== 1 ? 's' : ''}`, 14, 38)
+
+  // ─── Data table ───────────────────────────────────────────
+  autoTable(doc, {
+    startY: 43,
+    head: [['Reference', 'Title', 'Vendor', 'Amount', 'Status', 'Submission Date', 'Created']],
+    body: quotations.map((q) => [
+      q.vendor_reference,
+      q.quotation_title,
+      q.vendors?.vendor_name ?? '—',
+      formatCurrency(Number(q.quotation_amount)),
+      q.status,
+      formatDate(q.submission_date),
+      formatDate(q.created_at),
+    ]),
+    theme: 'grid',
+    headStyles: { fillColor: [79, 70, 229], textColor: 255, fontSize: 8, fontStyle: 'bold' },
+    bodyStyles: { fontSize: 7.5 },
+    alternateRowStyles: { fillColor: [245, 245, 255] },
+    margin: { left: 14, right: 14 },
+  })
+
+  // ─── Footer ───────────────────────────────────────────────
+  const pageCount = doc.getNumberOfPages()
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    const pageH = doc.internal.pageSize.getHeight()
+    doc.setDrawColor(200, 200, 220)
+    doc.line(14, pageH - 12, pageWidth - 14, pageH - 12)
+    doc.setFontSize(7)
+    doc.setTextColor(150, 150, 170)
+    doc.text(
+      `FS-2 Vendor Management System · Confidential · Page ${i} of ${pageCount}`,
+      pageWidth / 2, pageH - 6, { align: 'center' }
+    )
+  }
+
+  const timestamp = now.toISOString().slice(0, 10)
+  doc.save(`FS2-Quotations-Export-${timestamp}.pdf`)
+}

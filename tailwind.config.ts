@@ -14,6 +14,14 @@ const config: Config = {
       padding: '2rem',
       screens: { '2xl': '1400px' },
     },
+    screens: {
+      xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',
@@ -106,6 +114,10 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(4px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        'slide-down': {
+          from: { opacity: '0', transform: 'translateY(-8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
         'pulse-ring': {
           '0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--status-approved) / 0.4)' },
           '50%': { boxShadow: '0 0 0 6px hsl(var(--status-approved) / 0)' },
@@ -119,6 +131,7 @@ const config: Config = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.2s ease-out',
+        'slide-down': 'slide-down 0.25s ease-out',
         'pulse-ring': 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         shimmer: 'shimmer 2s linear infinite',
       },

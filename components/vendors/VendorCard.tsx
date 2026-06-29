@@ -43,16 +43,16 @@ export function VendorCard({ vendor, onRefresh }: VendorCardProps) {
       <Card className="shadow-card">
         <CardContent className="p-6">
           {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary text-lg font-bold">
                 {vendor.vendor_name.slice(0, 2).toUpperCase()}
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">{vendor.vendor_name}</h2>
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-foreground break-words">{vendor.vendor_name}</h2>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
-                  <Building2 className="h-3.5 w-3.5" />
-                  {vendor.company_name}
+                  <Building2 className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{vendor.company_name}</span>
                 </div>
               </div>
             </div>
@@ -65,12 +65,12 @@ export function VendorCard({ vendor, onRefresh }: VendorCardProps) {
           <div className="space-y-3">
             <a
               href={`mailto:${vendor.email_address}`}
-              className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              className="flex items-start gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors group min-w-0"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted group-hover:bg-accent">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted group-hover:bg-accent mt-0.5">
                 <Mail className="h-3.5 w-3.5" />
               </div>
-              {vendor.email_address}
+              <span className="break-all min-w-0">{vendor.email_address}</span>
             </a>
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted">
@@ -120,7 +120,7 @@ export function VendorCard({ vendor, onRefresh }: VendorCardProps) {
             <Button
               size="sm"
               variant="outline"
-              className="text-destructive hover:text-destructive border-destructive/30 hover:border-destructive ml-auto"
+              className="text-destructive hover:text-destructive border-destructive/30 hover:border-destructive sm:ml-auto"
               onClick={() => setShowDeleteModal(true)}
             >
               <Trash2 className="h-3.5 w-3.5" />Delete

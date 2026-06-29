@@ -76,7 +76,7 @@ export function QuotationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full max-w-2xl">
       {/* Core details */}
       <Card className="shadow-card">
         <CardHeader className="pb-4">
@@ -176,7 +176,7 @@ export function QuotationForm() {
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-3 pt-2">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
             ? <><Loader2 className="h-4 w-4 animate-spin" />Creating…</>

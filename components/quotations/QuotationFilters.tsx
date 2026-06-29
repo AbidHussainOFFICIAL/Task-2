@@ -51,14 +51,14 @@ export function QuotationFiltersBar({ filters, onChange, onReset }: QuotationFil
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:flex-wrap">
         <FilterChips
           chips={STATUS_CHIPS}
           value={(filters.status ?? 'all') as StatusFilter}
           onChange={(v) => onChange({ status: v === 'all' ? 'all' : v, page: 1 })}
         />
 
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
           {hasAdvancedFilters && (
             <Button variant="ghost" size="sm" onClick={resetAll} className="text-muted-foreground gap-1.5">
               <X className="h-3.5 w-3.5" />Clear filters
@@ -80,7 +80,7 @@ export function QuotationFiltersBar({ filters, onChange, onReset }: QuotationFil
       </div>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-[320px]">
+        <SheetContent side="right" className="w-full xs:w-[320px] max-w-full">
           <SheetHeader>
             <SheetTitle>Advanced Filters</SheetTitle>
           </SheetHeader>

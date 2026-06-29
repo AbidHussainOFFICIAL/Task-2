@@ -65,6 +65,7 @@ export function useQuotation(id: number | null) {
     error: error?.message ?? data?.error?.message ?? null,
     isLoading,
     mutate,
+    isNotFound: data?.error?.code === 'NOT_FOUND',
   }
 }
 

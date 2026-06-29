@@ -34,9 +34,10 @@ const NAV_ITEMS = [
 
 interface SidebarProps {
   className?: string
+  hideToggle?: boolean
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, hideToggle = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { initials, displayEmail, user } = useUser()
@@ -196,15 +197,17 @@ export function Sidebar({ className }: SidebarProps) {
       </div>
 
       {/* Collapse toggle */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setCollapsed(!collapsed)}
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        className="absolute -right-3 top-[72px] h-6 w-6 rounded-full border border-border bg-background shadow-sm hover:bg-accent z-10"
-      >
-        {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-      </Button>
+      {!hideToggle && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className="absolute -right-3 top-[72px] h-6 w-6 rounded-full border border-border bg-background shadow-sm hover:bg-accent z-10"
+        >
+          {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+        </Button>
+      )}
     </aside>
   )
 }

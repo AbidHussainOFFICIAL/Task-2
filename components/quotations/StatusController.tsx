@@ -61,10 +61,10 @@ export function StatusController({
               <p className="text-xs text-muted-foreground">
                 Review this quotation and make a decision:
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button
                   size="sm"
-                  className="bg-status-approved hover:bg-status-approved/90 text-status-approved-foreground"
+                  className="bg-status-approved hover:bg-status-approved/90 text-status-approved-foreground flex-1 sm:flex-none"
                   onClick={() => setPendingAction('Approved')}
                   disabled={isUpdating}
                 >
@@ -73,7 +73,7 @@ export function StatusController({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-status-rejected/40 text-status-rejected hover:bg-status-rejected-bg"
+                  className="border-status-rejected/40 text-status-rejected hover:bg-status-rejected-bg flex-1 sm:flex-none"
                   onClick={() => setPendingAction('Rejected')}
                   disabled={isUpdating}
                 >

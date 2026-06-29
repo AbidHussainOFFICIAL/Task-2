@@ -1,0 +1,28 @@
+# Normalize line endings to LF on all text files (prevents Windows CRLF warnings)
+* text=auto eol=lf
+
+# Explicitly declare binary types to prevent corruption
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+*.webp binary
+*.avif binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+
+# Force LF on all script and config files
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.js   text eol=lf
+*.jsx  text eol=lf
+*.json text eol=lf
+*.css  text eol=lf
+*.md   text eol=lf
+*.sql  text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.sh   text eol=lf

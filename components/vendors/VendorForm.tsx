@@ -82,7 +82,7 @@ export function VendorForm({ vendor, mode }: VendorFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full max-w-2xl">
       {/* Contact info */}
       <Card className="shadow-card">
         <CardHeader className="pb-4">
@@ -149,7 +149,7 @@ export function VendorForm({ vendor, mode }: VendorFormProps) {
               value={statusValue}
               onValueChange={(val) => setValue('status', val as 'Active' | 'Inactive', { shouldDirty: true })}
             >
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -162,7 +162,7 @@ export function VendorForm({ vendor, mode }: VendorFormProps) {
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-3 pt-2">
         <Button type="submit" disabled={isSubmitting || (mode === 'edit' && !isDirty)}>
           {isSubmitting ? (
             <><Loader2 className="h-4 w-4 animate-spin" />{mode === 'create' ? 'Creating…' : 'Saving…'}</>

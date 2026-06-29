@@ -1,16 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import { BarChart3, ArrowUpDown, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
-import { EmptyState, ErrorCard } from '@/components/shared'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CompareCard } from '@/components/compare/CompareCard'
 import { useComparison, useComparisonTitles } from '@/hooks/useComparison'
+import { cn } from '@/lib/utils/cn'
+
+import { useState } from 'react'
+import { BarChart3, ArrowUpDown, Download, ChevronsUpDown, Check, X } from 'lucide-react'
+
+import { EmptyState, ErrorCard } from '@/components/shared'
+
+import { CompareCard } from '@/components/compare/CompareCard'
+
 import { exportComparisonPdf } from '@/lib/pdf/comparison-export'
 import { toast } from 'sonner'
+
 import type { Quotation } from '@/types'
 
 type SortMode = 'price_asc' | 'price_desc' | 'vendor_az'
@@ -28,7 +36,104 @@ function sortQuotations(quotations: Quotation[], mode: SortMode): Quotation[] {
   })
 }
 
-export default function ComparePage() {
+/* ── Searchable combobox for quotation titles ─────────────────── */
+interface TitleComboboxProps {
+  titles: string[]
+  value: string | null
+  onChange: (v: string | null) => void
+}
+
+function TitleCombobox({ titles, value, onChange }: TitleComboboxProps) {
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+
+  const filtered = search.trim()
+    ? titles.filter((t) => t.toLowerCase().includes(search.toLowerCase()))
+    : titles
+
+  function select(title: string) {
+    onChange(title === value ? null : title)
+    setOpen(false)
+    setSearch('')
+  }
+
+  function clear(e: React.MouseEvent) {
+    e.stopPropagation()
+    onChange(null)
+    setSearch('')
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          role="combobox"
+          aria-expanded={open}
+          aria-controls="quotation-select-list"
+          aria-label="Select quotation title"
+          className={cn(
+            'flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background',
+            'hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors',
+            !value && 'text-muted-foreground'
+          )}
+        >
+          <span className="truncate">{value ?? 'Search quotation titles…'}</span>
+          <span className="flex items-center gap-1 shrink-0 ml-2">
+            {value && (
+              <X
+                className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors"
+                onClick={clear}
+                aria-label="Clear selection"
+              />
+            )}
+            <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+          </span>
+        </button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] max-w-sm p-0"
+        align="start"
+        sideOffset={4}
+      >
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Type to search titles…"
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList id="quotation-select-list">
+            {filtered.length === 0 ? (
+              <CommandEmpty>No titles match &quot;{search}&quot;</CommandEmpty>
+            ) : (
+              <CommandGroup heading={`${filtered.length} title${filtered.length !== 1 ? 's' : ''}`}>
+                {filtered.map((title) => (
+                  <CommandItem
+                    key={title}
+                    value={title}
+                    onSelect={() => select(title)}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <Check
+                      className={cn(
+                        'h-3.5 w-3.5 shrink-0 transition-opacity',
+                        value === title ? 'opacity-100 text-primary' : 'opacity-0'
+                      )}
+                    />
+                    <span className="truncate">{title}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+export function CompareContent() {
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null)
   const [sortMode, setSortMode] = useState<SortMode>('price_asc')
   const [exporting, setExporting] = useState(false)
@@ -62,32 +167,27 @@ export default function ComparePage() {
         <Card className="shadow-card">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-              {/* Title selector */}
-              <div className="flex-1 min-w-0 w-full sm:w-auto">
+              {/* Title selector — searchable combobox */}
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground mb-1.5 font-medium">Select Quotation Title</p>
                 {titlesLoading ? (
                   <Skeleton className="h-9 w-full max-w-sm" />
                 ) : titlesError ? (
                   <p className="text-sm text-destructive">{titlesError}</p>
                 ) : (
-                  <Select value={selectedTitle ?? ''} onValueChange={setSelectedTitle}>
-                    <SelectTrigger className="w-full max-w-sm">
-                      <SelectValue placeholder="Choose a quotation title to compare…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {titles.map((t) => (
-                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <TitleCombobox
+                    titles={titles}
+                    value={selectedTitle}
+                    onChange={setSelectedTitle}
+                  />
                 )}
               </div>
 
               {/* Sort + Export */}
               {selectedTitle && quotations.length > 0 && (
-                <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                    <SelectTrigger className="w-[160px]">
+                    <SelectTrigger className="w-[140px] sm:w-[160px]">
                       <ArrowUpDown className="h-3.5 w-3.5 mr-1.5" />
                       <SelectValue />
                     </SelectTrigger>

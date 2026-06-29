@@ -10,16 +10,16 @@ interface PageHeaderProps {
 export function PageHeader({ title, description, action, className }: PageHeaderProps) {
   return (
     <div className={cn(
-      'flex items-start justify-between gap-3 px-4 py-4 lg:px-6 lg:py-5 border-b border-border bg-background',
+      'flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-4 lg:px-6 lg:py-5 border-b border-border bg-background',
       className
     )}>
-      <div className="min-w-0">
-        <h2 className="text-base lg:text-lg font-semibold text-foreground truncate">{title}</h2>
+      <div className="min-w-0 flex-1">
+        <h2 className="text-base lg:text-lg font-semibold text-foreground break-words">{title}</h2>
         {description && (
-          <p className="text-xs lg:text-sm text-muted-foreground mt-0.5 hidden sm:block">{description}</p>
+          <p className="text-xs lg:text-sm text-muted-foreground mt-0.5 break-words">{description}</p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 flex flex-wrap gap-2 items-center">{action}</div>}
     </div>
   )
 }

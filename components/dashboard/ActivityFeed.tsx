@@ -48,7 +48,7 @@ export function ActivityFeed({ activities, isLoading, className }: ActivityFeedP
         const label = ACTIVITY_EVENT_LABELS[entry.event]
 
         return (
-          <li key={entry.id} className="flex gap-3 min-w-0">
+          <li key={entry.id} className="flex gap-3 min-w-0 relative">
             {/* Icon */}
             <div className={cn(
               'flex h-7 w-7 shrink-0 items-center justify-center rounded-full mt-0.5',
@@ -76,7 +76,7 @@ export function ActivityFeed({ activities, isLoading, className }: ActivityFeedP
 
             {/* Connector line (not on last item) */}
             {index < activities.length - 1 && (
-              <div className="absolute left-[15px] mt-7 w-px h-3 bg-border" aria-hidden />
+              <div className="absolute left-[13px] top-8 w-px h-3 bg-border" aria-hidden />
             )}
           </li>
         )
